@@ -1,0 +1,59 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${GROK_PLUGIN_ROOT:-.}/scripts/sync-upstream-skill.sh\" --fail-open --max-age 21600",
+            "timeout": 45
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${GROK_PLUGIN_ROOT:-.}/scripts/turn-ended.sh\"",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${GROK_PLUGIN_ROOT:-.}/scripts/turn-ended.sh\"",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "StopCancelled": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${GROK_PLUGIN_ROOT:-.}/scripts/turn-ended.sh\"",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${GROK_PLUGIN_ROOT:-.}/scripts/turn-ended.sh\"",
+            "timeout": 8
+          }
+        ]
+      }
+    ]
+  }
+}

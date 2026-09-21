@@ -1,0 +1,18 @@
+{
+  "name": "open-computer-use",
+  "version": "0.1.0",
+  "description": "Open-source desktop Computer Use for Grok Build. Control native macOS, Linux, and Windows apps through the official open-computer-use MCP server.",
+  "author": {
+    "name": "lich13",
+    "url": "https://github.com/lich13"
+  },
+  "homepage": "https://github.com/iFurySt/open-codex-computer-use",
+  "repository": "https://github.com/lich13/open-computer-use-grok",
+  "license": "MIT",
+  "keywords": [
+    "computer-use",
+    "desktop",
+    "accessibility",
+    "mcp"
+  ]
+}

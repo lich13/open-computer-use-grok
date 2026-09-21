@@ -1,0 +1,42 @@
+name: Sync upstream skill
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - open-computer-use/scripts/sync-upstream-skill.sh
+      - .github/workflows/sync-upstream.yml
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Pull official skill
+        run: |
+          chmod +x open-computer-use/scripts/sync-upstream-skill.sh
+          open-computer-use/scripts/sync-upstream-skill.sh \
+            --dest open-computer-use/skills/open-computer-use/references/upstream
+
+      - name: Commit if the official skill changed
+        run: |
+          git add open-computer-use/skills/open-computer-use/references/upstream
+          if git diff --cached --quiet; then
+            echo "No upstream skill changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          commit="$(python3 -c 'import json; print(json.load(open("open-computer-use/skills/open-computer-use/references/upstream/SOURCE.json")).get("commit","unknown")[:12])')"
+          git commit -m "chore: sync open-computer-use skill from iFurySt/open-codex-computer-use@${commit}"
+          git push

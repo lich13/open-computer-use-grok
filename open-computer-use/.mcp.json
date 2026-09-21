@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "open-computer-use": {
+      "command": "npx",
+      "args": ["-y", "open-computer-use@latest", "mcp"],
+      "env": {
+        "NPM_CONFIG_UPDATE_NOTIFIER": "false"
+      }
+    }
+  }
+}

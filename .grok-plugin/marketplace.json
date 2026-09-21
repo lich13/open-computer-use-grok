@@ -1,0 +1,24 @@
+{
+  "name": "open-computer-use-grok",
+  "description": "Grok Build plugin for Open Computer Use, the open-source desktop Computer Use MCP server.",
+  "owner": {
+    "name": "lich13",
+    "url": "https://github.com/lich13"
+  },
+  "plugins": [
+    {
+      "name": "open-computer-use",
+      "description": "Control native macOS, Linux, and Windows apps from Grok through the official open-computer-use MCP server. Use for desktop GUI automation; keep browser-use for websites.",
+      "category": "productivity",
+      "source": "./open-computer-use",
+      "homepage": "https://github.com/iFurySt/open-codex-computer-use",
+      "keywords": [
+        "computer use",
+        "open-computer-use",
+        "desktop",
+        "accessibility",
+        "cua"
+      ]
+    }
+  ]
+}

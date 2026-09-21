@@ -1,0 +1,13 @@
+{
+  "repo": "iFurySt/open-codex-computer-use",
+  "ref": "main",
+  "commit": "547b4ffb8ed731a8f16486e6d8a3b215484267d3",
+  "syncedAtUnix": 1789954536,
+  "syncedAt": "2026-09-21T01:35:36Z",
+  "files": [
+    "https://raw.githubusercontent.com/iFurySt/open-codex-computer-use/main/skills/open-computer-use/SKILL.md",
+    "https://raw.githubusercontent.com/iFurySt/open-codex-computer-use/main/skills/open-computer-use/references/installation.md",
+    "https://raw.githubusercontent.com/iFurySt/open-codex-computer-use/main/skills/open-computer-use/references/usage.md",
+    "https://raw.githubusercontent.com/iFurySt/open-codex-computer-use/main/skills/open-computer-use/references/troubleshooting.md"
+  ]
+}
