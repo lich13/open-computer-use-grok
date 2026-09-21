@@ -53,7 +53,7 @@ If MCP is down, the same tools exist on the CLI: `npx -y open-computer-use@lates
 
 Read these before non-trivial GUI work. They are copied from `iFurySt/open-codex-computer-use` (CI + SessionStart). Ignore agent-specific installers in them.
 
-- [references/upstream/SKILL.md](references/upstream/SKILL.md)
+- [references/upstream/official-skill.md](references/upstream/official-skill.md)
 - [references/upstream/usage.md](references/upstream/usage.md) — click methods, drag delivery, text/tree limits, MCP vs CLI
 - [references/upstream/installation.md](references/upstream/installation.md) — macOS permissions (`doctor`)
 - [references/upstream/troubleshooting.md](references/upstream/troubleshooting.md)

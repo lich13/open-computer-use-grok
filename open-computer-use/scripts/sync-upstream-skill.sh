@@ -85,7 +85,9 @@ download() {
   fi
 }
 
-download SKILL.md "${tmpdir}/SKILL.md"
+# Keep the official skill filename off SKILL.md so Grok does not
+# discover a second skill while walking this directory.
+download SKILL.md "${tmpdir}/official-skill.md"
 download references/installation.md "${tmpdir}/installation.md"
 download references/usage.md "${tmpdir}/usage.md"
 download references/troubleshooting.md "${tmpdir}/troubleshooting.md"
@@ -109,10 +111,11 @@ except Exception:
 fi
 
 mkdir -p "$DEST"
-cp "${tmpdir}/SKILL.md" "${DEST}/SKILL.md"
+cp "${tmpdir}/official-skill.md" "${DEST}/official-skill.md"
 cp "${tmpdir}/installation.md" "${DEST}/installation.md"
 cp "${tmpdir}/usage.md" "${DEST}/usage.md"
 cp "${tmpdir}/troubleshooting.md" "${DEST}/troubleshooting.md"
+rm -f "${DEST}/SKILL.md"
 
 python3 - "$source_json" "$REPO" "$REF" "$commit" "$now" "$RAW_BASE" <<'PY'
 import json, sys
