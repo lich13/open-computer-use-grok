@@ -1,61 +1,38 @@
-name: Sync upstream skill and version
+name: Sync upstream
 
 on:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - open-computer-use/scripts/sync-upstream-skill.sh
-      - open-computer-use/scripts/sync-plugin-version.sh
-      - .github/workflows/sync-upstream.yml
 
 permissions:
   contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          fetch-depth: 1
-
-      - name: Pull official skill and npm version
+          node-version: 22
+      - name: Sync one upstream revision and npm release
+        run: node scripts/sync-upstream.mjs
+      - name: Validate before publishing
+        run: node --test
+      - name: Commit changed content
         run: |
-          chmod +x open-computer-use/scripts/sync-upstream-skill.sh
-          chmod +x open-computer-use/scripts/sync-plugin-version.sh
-          open-computer-use/scripts/sync-upstream-skill.sh \
-            --dest open-computer-use/skills/open-computer-use/references/upstream
-          open-computer-use/scripts/sync-plugin-version.sh
-
-      - name: Commit if upstream skill or version changed
-        run: |
-          git add \
-            open-computer-use/skills/open-computer-use/references/upstream \
-            open-computer-use/.grok-plugin/plugin.json \
-            .grok-plugin/marketplace.json
+          git add open-computer-use .claude-plugin/marketplace.json .grok-plugin/marketplace.json
           if git diff --cached --quiet; then
-            echo "No upstream skill or version changes"
+            echo "Upstream content unchanged"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          commit="$(python3 -c 'import json; print(json.load(open("open-computer-use/skills/open-computer-use/references/upstream/SOURCE.json")).get("commit","unknown")[:12])')"
-          version="$(python3 -c 'import json; print(json.load(open("open-computer-use/.grok-plugin/plugin.json"))["version"])')"
-          names="$(git diff --cached --name-only)"
-          skill=0
-          ver=0
-          printf '%s\n' "$names" | grep -q 'references/upstream/' && skill=1 || true
-          printf '%s\n' "$names" | grep -Eq 'plugin\.json|marketplace\.json' && ver=1 || true
-          if [[ "$skill" -eq 1 && "$ver" -eq 1 ]]; then
-            msg="chore: sync open-computer-use skill from iFurySt/open-codex-computer-use@${commit} and version ${version}"
-          elif [[ "$ver" -eq 1 ]]; then
-            msg="chore: sync plugin version to open-computer-use@${version}"
-          else
-            msg="chore: sync open-computer-use skill from iFurySt/open-codex-computer-use@${commit}"
-          fi
-          git commit -m "$msg"
+          version="$(node -p 'require("./open-computer-use/.claude-plugin/plugin.json").version')"
+          git commit -m "chore: sync upstream and release plugin ${version}"
           git push

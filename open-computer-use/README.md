@@ -1,40 +1,10 @@
-# Open Computer Use for Grok Build
+# Open Computer Use
 
-Grok Build plugin that exposes the official
-[open-computer-use](https://github.com/iFurySt/open-codex-computer-use)
-MCP server. This repository does not vendor the native Computer Use runtime.
+Native desktop tools for Claude Code and Grok Build, powered by the official `open-computer-use@latest` MCP server.
 
-- **Runtime:** `npx -y open-computer-use@latest mcp` (npm package published from the official repo)
-- **Skill:** Grok overlay plus a copy of the official skill, refreshed from `main` by CI and on session start
-- **Hooks:** `turn-ended` at Grok turn boundaries so the overlay cursor can hide
+- Claude Code loads `.claude-plugin/plugin.json` and `hooks/claude.json`.
+- Grok Build loads `.grok-plugin/plugin.json` and `hooks/grok.json`.
+- Both use `.mcp.json` and `skills/open-computer-use/SKILL.md`.
+- Turn-end hooks use the cached npx runtime without making network requests.
 
-## Install
-
-From the marketplace repo:
-
-```bash
-grok plugin marketplace add lich13/open-computer-use-grok
-grok plugin install open-computer-use --trust
-grok plugin enable open-computer-use
-```
-
-Or install the plugin directory directly:
-
-```bash
-grok plugin install lich13/open-computer-use-grok#open-computer-use --trust
-grok plugin enable open-computer-use
-```
-
-On macOS 14+, run once and grant Accessibility and Screen Recording:
-
-```bash
-npx -y open-computer-use@latest doctor
-```
-
-## Update
-
-```bash
-grok plugin update open-computer-use
-```
-
-The MCP server resolves `open-computer-use@latest` on spawn. CI copies that npm version into this plugin's `plugin.json`, and `grok plugin update` installs the new manifest version.
+[Installation and automatic updates](https://github.com/lich13/open-computer-use-grok#安装)

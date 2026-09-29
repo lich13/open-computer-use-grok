@@ -15,5 +15,5 @@
     "accessibility",
     "mcp"
   ],
-  "hooks": "./hooks/grok.json"
+  "hooks": "./hooks/claude.json"
 }

@@ -1,10 +1,34 @@
-# open-computer-use-grok
+# Open Computer Use for Claude Code and Grok Build
 
-Grok Build 插件：把官方 [open-computer-use](https://github.com/iFurySt/open-codex-computer-use) 接到 Grok。
-
-这不是 Computer Use 运行时的 fork。原生能力仍由官方 npm 包 `open-computer-use` 提供；本仓库只提供 Grok 的 marketplace、`.mcp.json`、Skill 和 turn-ended hook。
+通过官方 [open-computer-use](https://github.com/iFurySt/open-codex-computer-use) MCP 控制原生桌面 App。两端共用运行时和 Skill，分别加载兼容的回合结束 hook。
 
 ## 安装
+
+需要 Node.js 22+。macOS 需要 14+；Linux / Windows 的桌面依赖见[官方安装说明](open-computer-use/skills/open-computer-use/references/upstream/installation.md)。
+
+### Claude Code
+
+```bash
+claude plugin marketplace add lich13/open-computer-use-grok
+claude plugin install open-computer-use@open-computer-use-grok
+```
+
+在 `/plugin` → Marketplaces → `open-computer-use-grok` 开启 **Enable auto-update**。也可以在 `~/.claude/settings.json` 合并以下字段：
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "open-computer-use-grok": {
+      "source": { "source": "github", "repo": "lich13/open-computer-use-grok" },
+      "autoUpdate": true
+    }
+  }
+}
+```
+
+如果已设置 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`、`DISABLE_AUTOUPDATER=1` 或 `DISABLE_UPDATES=1`，还需在 settings 的 `env` 中设置 `"FORCE_AUTOUPDATE_PLUGINS": "1"`，才能单独允许插件更新。
+
+### Grok Build
 
 ```bash
 grok plugin marketplace add lich13/open-computer-use-grok
@@ -12,55 +36,48 @@ grok plugin install open-computer-use --trust
 grok plugin enable open-computer-use
 ```
 
-也可以直接装插件目录：
+Grok 默认在会话启动时更新插件。若全局或组织策略设置了 `plugin_auto_update=false`，需先解除该限制；Claude 导入设置里的 marketplace `autoUpdate:false` 也会关闭 Grok 的全局插件自动更新。
+
+### macOS 权限
 
 ```bash
-grok plugin install lich13/open-computer-use-grok#open-computer-use --trust
-grok plugin enable open-computer-use
-```
-
-macOS 14+ 第一次用前授权 **Accessibility** 和 **Screen Recording**：
-
-```bash
-npx -y open-computer-use@latest
-# 或
 npx -y open-computer-use@latest doctor
 ```
 
-网页任务继续用已安装的 `browser-use` / `chrome-devtools`。本插件只管 Finder、TextEdit、系统设置等原生 App。
+按系统提示授予 **Accessibility** 和 **Screen Recording**，再启动新会话。可以让 Claude 或 Grok“用 Open Computer Use 查看 TextEdit 窗口”。网页任务使用浏览器工具。
 
-## 如何跟着官方仓库更新
+## 自动更新
 
-| 层 | 更新方式 |
+| 内容 | 更新方式 |
 |---|---|
-| Computer Use 运行时（9 个桌面工具） | MCP 每次启动 `npx -y open-computer-use@latest mcp`，跟随官方 npm |
-| 官方 Skill / 用法文档 | GitHub Action 每 6 小时从 `iFurySt/open-codex-computer-use` 的 `main` 同步；Grok 会话开始时也会刷新（6 小时缓存） |
-| 本插件版本 | 同一条 GitHub Action 每 6 小时把 `plugin.json` 和 `marketplace.json` 的 `version` 写成 npm `open-computer-use@latest`。本机再由 `grok plugin update` 或会话启动时的插件自动更新装上 |
+| 官方运行时 | 每次 MCP 启动通过 `npx -y open-computer-use@latest mcp` 解析 npm 最新版 |
+| 官方 Skill / 文档 | GitHub Actions 每 6 小时检查；从同一个上游 commit 获取，内容未变则不提交 |
+| 插件与 hooks | 文档或 npm 版本变化时自动递增插件补丁版本，并同步两端清单；本机由各自的 marketplace 更新器安装 |
 
-## 本机更新
+更新不改动正在运行的 MCP。Claude 可运行 `/reload-plugins`，或两端启动新会话以使用新版。网络不可用时，上游同步失败会保留仓库中已有文档；首次下载运行时需要网络。
+
+手动更新：
 
 ```bash
+claude plugin marketplace update open-computer-use-grok
+claude plugin update open-computer-use@open-computer-use-grok
 grok plugin update open-computer-use
 ```
 
-## 仓库布局
+Claude 的后台更新在交互会话第一次发言后延迟运行，最长约 10 分钟；`--print` 不触发这轮后台更新。详见[官方更新规则](https://code.claude.com/docs/en/plugins/loading#when-auto-update-runs)。
 
+## 开发
+
+```bash
+node --test
+claude plugin validate .
+claude plugin validate open-computer-use
+grok plugin validate open-computer-use
+node scripts/sync-upstream.mjs
 ```
-.grok-plugin/marketplace.json     # Grok marketplace 索引
-open-computer-use/                # 实际插件
-  .grok-plugin/plugin.json
-  .mcp.json                       # npx open-computer-use@latest mcp
-  hooks/hooks.json                # SessionStart 同步 + turn-ended
-  scripts/
-  skills/open-computer-use/
-```
 
-## 安全
-
-插件会在本机拉起官方 Computer Use MCP，从而读取窗口树并点击、输入。只从你信任的 git 源安装，并在 macOS 上按系统提示授权。不要对密码管理器或无关的私人 App 使用，除非用户明确要求。
-
-本项目与 iFurySt / OpenAI / xAI 无官方从属关系。上游许可证为 MIT。
+修改插件时递增两个 `plugin.json` 和两个 `marketplace.json` 的版本；版本独立于 npm 运行时。测试会检查两端清单、hooks 和版本一致性。
 
 ## License
 
-MIT. Upstream Computer Use runtime: [iFurySt/open-codex-computer-use](https://github.com/iFurySt/open-codex-computer-use) (MIT).
+MIT。运行时来自 [iFurySt/open-codex-computer-use](https://github.com/iFurySt/open-codex-computer-use)，本仓库不 fork 原生运行时，与 Anthropic / xAI / 上游作者无官方从属关系。
