@@ -36,7 +36,7 @@ export async function syncUpstream({ directory = root, fetchImpl = fetch } = {})
   if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(latest.version)) throw new Error('Invalid npm version');
   const base = `https://raw.githubusercontent.com/${repo}/${commit.sha}/skills/open-computer-use`;
   const docs = await Promise.all(Object.entries(files).map(async ([name, source]) => {
-    const body = await (await get(`${base}/${source}`, fetchImpl)).text();
+    const body = (await (await get(`${base}/${source}`, fetchImpl)).text()).replace(/\r\n/g, '\n');
     if (!body.trim() || /^\s*<(?:!doctype|html)/i.test(body)) throw new Error(`Invalid document: ${source}`);
     return [name, body];
   }));
@@ -45,7 +45,7 @@ export async function syncUpstream({ directory = root, fetchImpl = fetch } = {})
   const updates = new Map();
   for (const [name, body] of docs) {
     const path = join(referenceRoot, name);
-    if (await readFile(path, 'utf8') !== body) updates.set(path, body);
+    if ((await readFile(path, 'utf8')).replace(/\r\n/g, '\n') !== body) updates.set(path, body);
   }
   // An unrelated upstream commit or a timestamp alone is not a new release.
   if (updates.size) updates.set(join(referenceRoot, 'SOURCE.json'), json({
@@ -54,7 +54,10 @@ export async function syncUpstream({ directory = root, fetchImpl = fetch } = {})
   }));
   const runtimePath = join(pluginRoot, 'upstream.json');
   const runtime = { package: 'open-computer-use', version: latest.version };
-  if (await readFile(runtimePath, 'utf8') !== json(runtime)) updates.set(runtimePath, json(runtime));
+  const previousRuntime = JSON.parse(await readFile(runtimePath, 'utf8'));
+  if (previousRuntime.package !== runtime.package || previousRuntime.version !== runtime.version) {
+    updates.set(runtimePath, json(runtime));
+  }
   if (!updates.size) return { changed: false };
 
   const manifests = [];

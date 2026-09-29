@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cp, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -46,6 +46,19 @@ test('unchanged docs and npm version leave all bytes unchanged, even at a new up
   const context = await fixture(t);
   const before = await snapshot(context.directory);
   assert.deepEqual(await syncUpstream(context), { changed: false });
+  assert.deepEqual(await snapshot(context.directory), before);
+});
+
+test('checkout line endings and JSON formatting do not trigger a release', async t => {
+  const context = await fixture(t);
+  const runtimePath = join(context.directory, 'open-computer-use/upstream.json');
+  await writeFile(runtimePath, JSON.stringify(await readJSON(runtimePath)) + '\r\n');
+  const usagePath = join(context.directory, docs, 'usage.md');
+  const original = (await readFile(usagePath, 'utf8')).replace(/\r\n/g, '\n');
+  await writeFile(usagePath, original.replace(/\n/g, '\r\n'));
+  const fetchImpl = url => url.endsWith('/usage.md') ? Promise.resolve(new Response(original)) : context.fetchImpl(url);
+  const before = await snapshot(context.directory);
+  assert.deepEqual(await syncUpstream({ ...context, fetchImpl }), { changed: false });
   assert.deepEqual(await snapshot(context.directory), before);
 });
 
