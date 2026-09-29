@@ -1,7 +1,6 @@
 ---
 name: open-computer-use
 description: Control native desktop apps such as Finder, TextEdit, or System Settings through the Open Computer Use MCP server. Use for desktop clicks, typing, Accessibility inspection, or OCU troubleshooting. Use browser tools for websites instead.
-user-invocable: true
 ---
 
 # Open Computer Use
