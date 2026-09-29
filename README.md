@@ -35,7 +35,7 @@ npx -y open-computer-use@latest doctor
 |---|---|
 | Computer Use 运行时（9 个桌面工具） | MCP 每次启动 `npx -y open-computer-use@latest mcp`，跟随官方 npm |
 | 官方 Skill / 用法文档 | GitHub Action 每 6 小时从 `iFurySt/open-codex-computer-use` 的 `main` 同步；Grok 会话开始时也会刷新（6 小时缓存） |
-| 本插件封装 | `grok plugin update open-computer-use`，或 Grok 默认的 session-start plugin auto-update |
+| 本插件版本 | 同一条 GitHub Action 每 6 小时把 `plugin.json` 和 `marketplace.json` 的 `version` 写成 npm `open-computer-use@latest`。本机再由 `grok plugin update` 或会话启动时的插件自动更新装上 |
 
 ## 本机更新
 

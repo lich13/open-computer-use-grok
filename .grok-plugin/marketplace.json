@@ -8,6 +8,7 @@
   "plugins": [
     {
       "name": "open-computer-use",
+      "version": "0.3.6",
       "description": "Control native macOS, Linux, and Windows apps from Grok through the official open-computer-use MCP server. Use for desktop GUI automation; keep browser-use for websites.",
       "category": "productivity",
       "source": "./open-computer-use",

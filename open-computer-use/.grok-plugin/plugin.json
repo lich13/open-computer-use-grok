@@ -1,6 +1,6 @@
 {
   "name": "open-computer-use",
-  "version": "0.1.0",
+  "version": "0.3.6",
   "description": "Open-source desktop Computer Use for Grok Build. Control native macOS, Linux, and Windows apps through the official open-computer-use MCP server.",
   "author": {
     "name": "lich13",

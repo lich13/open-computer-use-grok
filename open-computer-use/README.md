@@ -37,4 +37,4 @@ npx -y open-computer-use@latest doctor
 grok plugin update open-computer-use
 ```
 
-The MCP server resolves `open-computer-use@latest` on spawn, so tool implementations follow official npm releases without a plugin bump.
+The MCP server resolves `open-computer-use@latest` on spawn. CI copies that npm version into this plugin's `plugin.json`, and `grok plugin update` installs the new manifest version.
