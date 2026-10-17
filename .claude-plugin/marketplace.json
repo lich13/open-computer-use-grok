@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "open-computer-use",
-      "version": "0.4.9",
+      "version": "0.4.10",
       "description": "Control native desktop apps from Claude Code and Grok Build through the official open-computer-use MCP server.",
       "category": "productivity",
       "source": "./open-computer-use",
