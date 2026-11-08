@@ -19,7 +19,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: node
+          check-latest: true
       - name: Sync one upstream revision and npm release
         run: node scripts/sync-upstream.mjs
       - name: Validate before publishing
